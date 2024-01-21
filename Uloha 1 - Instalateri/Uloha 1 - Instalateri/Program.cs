@@ -19,7 +19,13 @@ namespace Uloha_1___Instalateri
 			Z = z;
 		}
 
-
+		public override bool Equals(object obj)
+		{
+			return obj is Point point &&
+				   X == point.X &&
+				   Y == point.Y &&
+				   Z == point.Z;
+		}
 
 		public override string ToString()
 		{
@@ -60,8 +66,7 @@ namespace Uloha_1___Instalateri
 		{
 			return $"X={X}, Y={Y}";
 		}
-
-	}
+}
 
 
 
@@ -75,13 +80,40 @@ namespace Uloha_1___Instalateri
 		Left,
 	}
 
-
-	internal class Program
+	public enum RelativePosition
 	{
+		Same,
+		Adjacent,
+		Opositte
+	}
 
-		static Side whatFaceIsThePointOn(int wallSize, Point point)
+	public class Room
+	{
+		public int Size { get; }
+
+		public Room(int size)
 		{
-			if (wallSize == point.X)
+			Size = size;
+		}
+
+		static int Distance(int a, int b)
+		{
+			return Math.Abs(a - b);
+		}
+
+		bool SameWall(int a, int b)
+		{
+			return a == b && (a == 0 || a == Size);
+		}
+
+		bool OppositeWall(int a, int b)
+		{
+			return Math.Abs(a - b) == Size;
+		}
+
+		Side whatFaceIsThePointOn(Point point)
+		{
+			if (Size == point.X)
 			{
 				return Side.Front;
 			}
@@ -89,7 +121,7 @@ namespace Uloha_1___Instalateri
 			{
 				return Side.Back;
 			}
-			else if (wallSize == point.Y)
+			else if (Size == point.Y)
 			{
 				return Side.Top;
 			}
@@ -97,7 +129,7 @@ namespace Uloha_1___Instalateri
 			{
 				return Side.Botom;
 			}
-			else if (wallSize == point.Z)
+			else if (Size == point.Z)
 			{
 				return Side.Right;
 			}
@@ -108,9 +140,77 @@ namespace Uloha_1___Instalateri
 			throw new ArgumentException($"The point {point} is not on any side ");
 		}
 
-		static (int, Point, Point) ParseInput(string input)
+		public RelativePosition GetRelativePosition(Point point1, Point point2)
+		{
+			if (SameWall(point1.X, point2.X) || SameWall(point1.Y, point2.Y) || SameWall(point1.Z, point2.Z))
+			{
+				return RelativePosition.Same;
+			}
+			else if (OppositeWall(point1.X, point2.X) || OppositeWall(point1.Y, point2.Y) || OppositeWall(point1.Z, point2.Z))
+			{
+				return RelativePosition.Opositte;
+			}
+			else
+			{
+				return RelativePosition.Adjacent;
+			}
+		}
+
+		public int calculatePipeLength(Point point1, Point point2)
+		{
+			switch (GetRelativePosition(point1, point2))
+			{
+				case RelativePosition.Same:
+				case RelativePosition.Adjacent:
+					return Distance(point1.X, point2.X) + Distance(point1.Y, point2.Y) + Distance(point1.Z, point2.Z);
+				case RelativePosition.Opositte:
+					return -3;
+				default:
+					throw new InvalidOperationException();
+			}
+		}
+
+		public double calculateHoseLength(Point point1, Point point2)
+		{
+			switch (GetRelativePosition(point1, point2))
+			{
+				case RelativePosition.Same:
+					return Math.Sqrt(
+						Math.Pow(Distance(point1.X, point2.X), 2) +
+						Math.Pow(Distance(point1.Y, point2.Y), 2) +
+						Math.Pow(Distance(point1.Z, point2.Z), 2)
+					);
+				case RelativePosition.Adjacent:
+					return -2;
+				case RelativePosition.Opositte:
+					return -3;
+				default:
+					throw new InvalidOperationException();
+			}
+		}
+
+
+	}
+
+
+
+	internal class Program
+	{
+
+		public static bool ExactlyOneTrue(params bool[] conditions)
+		{
+			return conditions.Count(c => c) == 1;
+		}
+
+		private static void checkArgument(bool test, string message)
+		{
+			if (!test) throw new ArgumentException(message);
+		}
+
+		public static (int, Point, Point) ParseInput(string input)
 		{
 			string[] splitInput = input.Split(',');
+			checkArgument(splitInput.Length == 7, "Expecting 7 integers.");
 
 			int[] parsedValues = new int[splitInput.Length];
 
@@ -118,38 +218,37 @@ namespace Uloha_1___Instalateri
 			{
 				if (!int.TryParse(splitInput[i], out parsedValues[i]))
 				{
-					// Handle the case where parsing fails, return an error, or use a default value
-					// For now, let's use 0 as a default value
-					parsedValues[i] = 0;
+					checkArgument(false, $"Item #{i} ({splitInput[i]}) is not an integer.");
 				}
 			}
 
+			int roomSize = parsedValues[0];
+			checkArgument(0 < roomSize, "Room size must be positive.");
 
-			return (parsedValues[0], new Point(parsedValues[1], parsedValues[2], parsedValues[3]), new Point(parsedValues[4], parsedValues[5], parsedValues[6]));
-		}
+			Point point1 = new Point(parsedValues[1], parsedValues[2], parsedValues[3]);
+			Point point2 = new Point(parsedValues[4], parsedValues[5], parsedValues[6]);
 
-		static int calculatePipeLength(int roomsize,Point point1,Point point2)
-		{
-			return 5;
-		}
-
-		static int calculateHoseLength(int roomsize, Point point1, Point point2)
-		{
-			return 5;
-		}
-
-		static string type(int roomsize, Point point1, Point point2)
-		{
-			if (point1.X == point2.X || point1.Y == point2.Y || point1.Z == point1.Z)
+			// within range
+			for (int i = 1; i < splitInput.Length; i++)
 			{
-				return "Same face";
-			}else if (Math.Abs(point1.X - roomsize) == point2.X || Math.Abs(point1.Y - roomsize) == point2.Y || Math.Abs(point1.Z - roomsize) == point2.Z)
-			{
-				return "Oposite face";
-			}else
-			{
-				return "neighbor face";
+				int number = parsedValues[i];
+				checkArgument(
+					number == 0 || number == roomSize || (20 <= number && number <= roomSize - 20),
+					$"Point {parsedValues[i]} out of range."
+				);
 			}
+
+			// on one wall
+			checkArgument(ExactlyOneTrue(
+				point1.X == 0 || point1.X == roomSize,
+				point1.Y == 0 || point1.Y == roomSize,
+				point1.Z == 0 || point1.Z == roomSize),
+				"The point must be on exactly one wall"
+			);
+
+			// not outside of the room
+
+			return (roomSize, point1, point2);
 		}
 
 
@@ -160,9 +259,9 @@ namespace Uloha_1___Instalateri
 
 			(int roomsize, Point point1, Point point2) = ParseInput(inputString);
 
-
-			float pipeLen = calculatePipeLength(roomsize, point1, point2);
-			float hoseLen = calculateHoseLength(roomsize, point1, point2);
+			Room room = new Room(roomsize);
+			int pipeLen = room.calculatePipeLength(point1, point2);
+			double hoseLen = room.calculateHoseLength(point1, point2);
 
 
 			Console.WriteLine("roomsize: " + roomsize);
