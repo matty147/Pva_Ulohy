@@ -246,7 +246,7 @@ namespace Uloha_1___Instalateri
 			}
 
 			int roomSize = parsedValues[0];
-			checkArgument(0 < roomSize, "Room size must be positive.");
+			checkArgument(40 < roomSize, "Room size must be at least 40.");
 
 			Point point1 = new Point(parsedValues[1], parsedValues[2], parsedValues[3]);
 			Point point2 = new Point(parsedValues[4], parsedValues[5], parsedValues[6]);
@@ -257,7 +257,7 @@ namespace Uloha_1___Instalateri
 				int number = parsedValues[i];
 				checkArgument(
 					number == 0 || number == roomSize || (20 <= number && number <= roomSize - 20),
-					$"Point {parsedValues[i]} out of range."
+					$"Point {parsedValues[i]} out of range (20 .. {roomSize-20})."
 				);
 			}
 
@@ -277,23 +277,30 @@ namespace Uloha_1___Instalateri
 
 		static void Main(string[] args)
 		{
-			Console.Write("a: ");
+			Console.WriteLine("Enter 7 integers; size of the room, and the coordinates of two points. Use the comma as a separator.");
 			string inputString = Console.ReadLine();
 
-			(int roomsize, Point point1, Point point2) = ParseInput(inputString);
+			int roomsize; Point point1; Point point2;
+			try {
+				(roomsize, point1, point2) = ParseInput(inputString);
+			}
+			catch (Exception ex) {
+				Console.WriteLine($"ERROR: {ex.Message}");
+				Console.ReadKey();
+				Environment.Exit(0);
+				return;
+			}
 
 			Room room = new Room(roomsize);
 			int pipeLen = room.calculatePipeLength(point1, point2);
 			double hoseLen = room.calculateHoseLength(point1, point2);
 
 
-			Console.WriteLine("roomsize: " + roomsize);
-
-			Console.WriteLine($"Point 1:  {point1}");
-			Console.WriteLine($"Point 2:  {point2}");
-
-			Console.WriteLine($"pipeLength: {pipeLen}");
-			Console.WriteLine($"hoseLenght: {hoseLen}");
+			Console.WriteLine($"Roomsize:   {roomsize}");
+			Console.WriteLine($"Point 1:    {point1}");
+			Console.WriteLine($"Point 2:    {point2}");
+			Console.WriteLine($"PipeLength: {pipeLen}");
+			Console.WriteLine($"HoseLenght: {hoseLen}");
 
 			Console.ReadKey();
 		}
