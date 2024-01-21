@@ -111,6 +111,21 @@ namespace Uloha_1___Instalateri
 			return Math.Abs(a - b) == Size;
 		}
 
+
+		public Point2D project(Point point)
+		{
+			if (point.X == 0 || point.X == Size)
+			{
+				return new Point2D(point.Y, point.Z);
+			}
+			if (point.Y == 0 || point.Y == Size)
+			{
+				return new Point2D(point.X, point.Z);
+			}
+
+			return new Point2D(point.X, point.Y);
+		}
+
 		Side whatFaceIsThePointOn(Point point)
 		{
 			if (Size == point.X)
@@ -163,8 +178,16 @@ namespace Uloha_1___Instalateri
 				case RelativePosition.Same:
 				case RelativePosition.Adjacent:
 					return Distance(point1.X, point2.X) + Distance(point1.Y, point2.Y) + Distance(point1.Z, point2.Z);
+
 				case RelativePosition.Opositte:
-					return -3;
+					Point2D p1 = project(point1);
+					Point2D p2 = project(point2);
+
+					return Math.Min(
+						Math.Min(p1.X + p2.X, (Size - p1.X) + (Size - p2.X)) + Distance(p1.Y, p2.Y),
+						Math.Min(p1.Y + p2.Y, (Size - p1.Y) + (Size - p2.Y)) + Distance(p1.X, p2.X)
+					) + Size;
+
 				default:
 					throw new InvalidOperationException();
 			}

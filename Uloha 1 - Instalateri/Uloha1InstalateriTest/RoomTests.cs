@@ -45,12 +45,13 @@ namespace Uloha_1___Instalateri.Tests
 		public void calculatePipeLengthTest_TeacherTests() //from teacher
 		{
 			Room room = new Room(300);
-			Room smallerroom = new Room(184);
 
 			Assert.AreEqual(380, room.calculatePipeLength(new Point(100, 100, 0), new Point(20, 0, 200))); 
 			Assert.AreEqual(400, room.calculatePipeLength(new Point(100, 100, 0), new Point(300, 100, 200)));
-			// Assert.AreEqual(590, room.calculatePipeLength(new Point(130, 100, 0), new Point(200, 280, 300)));  // opposite 
-			// Assert.AreEqual(319, smallerroom.calculatePipeLength(new Point(21, 37, 0), new Point(96, 55, 184)));  // opposite 
+			Assert.AreEqual(590, room.calculatePipeLength(new Point(130, 100, 0), new Point(200, 280, 300)));  // opposite 
+
+			Room smallerroom = new Room(184);
+			Assert.AreEqual(319, smallerroom.calculatePipeLength(new Point(21, 37, 0), new Point(96, 55, 184)));  // opposite 
 		}
 
 		[TestMethod()]
