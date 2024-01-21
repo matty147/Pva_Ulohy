@@ -31,24 +31,6 @@ namespace Uloha_1___Instalateri
 		{
 			return $"X={X}, Y={Y}, Z={Z}";
 		}
-
-		public Point2D getPointOnSide(int roomsize)
-		{
-			if (X == 0 || X == roomsize)
-			{
-				return new Point2D(Y, Z);
-			}
-			if (Y == 0 || Y == roomsize)
-			{
-				return new Point2D(X, Z);
-			}
-			if (Z == 0 || Z == roomsize)
-			{
-				return new Point2D(X, Y);
-			}
-			throw new ArgumentException($"Wrong roomsize ({roomsize})");
-		}
-
 	}
 
 	public class Point2D
@@ -66,20 +48,9 @@ namespace Uloha_1___Instalateri
 		{
 			return $"X={X}, Y={Y}";
 		}
-}
-
-
-
-	public enum Side
-	{
-		Front,
-		Back,
-		Top,
-		Botom,
-		Right,
-		Left,
 	}
 
+	/** Relative position of the walls with the two points */
 	public enum RelativePosition
 	{
 		Same,
@@ -101,58 +72,35 @@ namespace Uloha_1___Instalateri
 			return Math.Abs(a - b);
 		}
 
+		bool IsWall(int a)
+		{
+			return a == 0 || a == Size;
+		}
+
+
 		bool SameWall(int a, int b)
 		{
-			return a == b && (a == 0 || a == Size);
+			return IsWall(a) && a == b;
 		}
 
 		bool OppositeWall(int a, int b)
 		{
-			return Math.Abs(a - b) == Size;
+			return IsWall(a) && IsWall(b) && a != b;
 		}
 
-
+		/* Project a point on the 2D wall it is on. */
 		public Point2D project(Point point)
 		{
-			if (point.X == 0 || point.X == Size)
+			if (IsWall(point.X))
 			{
 				return new Point2D(point.Y, point.Z);
 			}
-			if (point.Y == 0 || point.Y == Size)
+			if (IsWall(point.Y))
 			{
 				return new Point2D(point.X, point.Z);
 			}
 
 			return new Point2D(point.X, point.Y);
-		}
-
-		Side whatFaceIsThePointOn(Point point)
-		{
-			if (Size == point.X)
-			{
-				return Side.Front;
-			}
-			else if (0 == point.X)
-			{
-				return Side.Back;
-			}
-			else if (Size == point.Y)
-			{
-				return Side.Top;
-			}
-			else if (0 == point.Y)
-			{
-				return Side.Botom;
-			}
-			else if (Size == point.Z)
-			{
-				return Side.Right;
-			}
-			else if (0 == point.Z)
-			{
-				return Side.Left;
-			}
-			throw new ArgumentException($"The point {point} is not on any side ");
 		}
 
 		public RelativePosition GetRelativePosition(Point point1, Point point2)
@@ -198,23 +146,53 @@ namespace Uloha_1___Instalateri
 			switch (GetRelativePosition(point1, point2))
 			{
 				case RelativePosition.Same:
-					return Math.Sqrt(	// pythagoras theorem (one of them is zero)
+					return Math.Sqrt(	// pythagoras theorem (one of the items is zero)
 						Math.Pow(Distance(point1.X, point2.X), 2) +
 						Math.Pow(Distance(point1.Y, point2.Y), 2) +
 						Math.Pow(Distance(point1.Z, point2.Z), 2)
 					);
 				case RelativePosition.Adjacent:
-					// try all four directions (right, left, up, down)
-					return Math.Min(
-								Math.Min(
-									pythagorastheorem(Distance(point1.Y, point2.Y), (Size - point1.X) + (Size - point2.X)),
-									pythagorastheorem(Distance(point1.Y, point2.Y), point1.X + point2.X)
-								),
-								Math.Min(
-									pythagorastheorem(Distance(point1.X, point2.X), (Size - point1.Y) + (Size - point2.Y)),
-									pythagorastheorem(Distance(point1.X, point2.X), point1.Y + point2.Y)
-								)
-							);
+					int dx = Distance(point1.X, point2.X);
+					int dy = Distance(point1.Y, point2.Y);
+					int dz = Distance(point1.Z, point2.Z);
+
+					// there is one shared dimension for point1 and point2;
+					// and two other two dimensions, for each point one of them is on the wall
+					if (IsWall(point1.X))
+					{
+						if (IsWall(point2.Y))
+						{
+							return pythagorastheorem(dx + dy, dz);
+						}
+						else
+						{
+							return pythagorastheorem(dx + dz, dy);
+						}
+					}
+					if (IsWall(point1.Y))
+					{
+						if (IsWall(point2.X))
+						{
+							return pythagorastheorem(dx + dy, dz);
+						}
+						else
+						{
+							return pythagorastheorem(dy + dz, dx);
+						}
+					}
+					if (IsWall(point1.Z))
+					{
+						if (IsWall(point2.X))
+						{
+							return pythagorastheorem(dx + dz, dy);
+						}
+						else
+						{
+							return pythagorastheorem(dy + dz, dx);
+						}
+					}
+					throw new InvalidOperationException();
+
 				case RelativePosition.Opositte:
 					// try all four directions (right, left, up, down)
 					return Math.Min(
@@ -236,15 +214,12 @@ namespace Uloha_1___Instalateri
 		{
 			return Math.Sqrt(Math.Pow(a,2)+ Math.Pow(b,2));
 		}
-
-
 	}
 
 
 
 	internal class Program
 	{
-
 		public static bool ExactlyOneTrue(params bool[] conditions)
 		{
 			return conditions.Count(c => c) == 1;
