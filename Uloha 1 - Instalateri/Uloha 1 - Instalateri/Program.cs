@@ -198,18 +198,43 @@ namespace Uloha_1___Instalateri
 			switch (GetRelativePosition(point1, point2))
 			{
 				case RelativePosition.Same:
-					return Math.Sqrt(
+					return Math.Sqrt(	// pythagoras theorem (one of them is zero)
 						Math.Pow(Distance(point1.X, point2.X), 2) +
 						Math.Pow(Distance(point1.Y, point2.Y), 2) +
 						Math.Pow(Distance(point1.Z, point2.Z), 2)
 					);
 				case RelativePosition.Adjacent:
-					return -2;
+					// try all four directions (right, left, up, down)
+					return Math.Min(
+								Math.Min(
+									pythagorastheorem(Distance(point1.Y, point2.Y), (Size - point1.X) + (Size - point2.X)),
+									pythagorastheorem(Distance(point1.Y, point2.Y), point1.X + point2.X)
+								),
+								Math.Min(
+									pythagorastheorem(Distance(point1.X, point2.X), (Size - point1.Y) + (Size - point2.Y)),
+									pythagorastheorem(Distance(point1.X, point2.X), point1.Y + point2.Y)
+								)
+							);
 				case RelativePosition.Opositte:
-					return -3;
+					// try all four directions (right, left, up, down)
+					return Math.Min(
+								Math.Min(
+									pythagorastheorem(Distance(point1.Y, point2.Y), (Size - point1.X) + Size + (Size - point2.X)),
+									pythagorastheorem(Distance(point1.Y, point2.Y), point1.X + Size + point2.X)
+								),
+								Math.Min(
+									pythagorastheorem(Distance(point1.X, point2.X), (Size - point1.Y) + Size + (Size - point2.Y)),
+									pythagorastheorem(Distance(point1.X, point2.X), point1.Y + Size + point2.Y)
+								)
+							);
 				default:
 					throw new InvalidOperationException();
 			}
+		}
+
+		static double pythagorastheorem(int a, int b)
+		{
+			return Math.Sqrt(Math.Pow(a,2)+ Math.Pow(b,2));
 		}
 
 

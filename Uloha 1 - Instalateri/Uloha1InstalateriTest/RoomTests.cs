@@ -8,9 +8,12 @@ using System.Threading.Tasks;
 
 namespace Uloha_1___Instalateri.Tests
 {
+
 	[TestClass()]
 	public class RoomTests
 	{
+		const double DELTA = 0.0001;
+
 		[TestMethod()]
 		public void calculatePipeLengthTest_SameWall()
 		{
@@ -36,9 +39,9 @@ namespace Uloha_1___Instalateri.Tests
 		{
 			Room room = new Room(100);
 
-			Assert.AreEqual(0.0, room.calculateHoseLength(new Point(20, 20, 100), new Point(20, 20, 100)));   // the same place
-			Assert.AreEqual(10.0, room.calculateHoseLength(new Point(10, 20, 100), new Point(20, 20, 100)));  // one dimension diff
-			Assert.AreEqual(Math.Sqrt(200), room.calculateHoseLength(new Point(30, 30, 100), new Point(20, 20, 100)));  // two dimension diff
+			Assert.AreEqual(0.0, room.calculateHoseLength(new Point(20, 20, 100), new Point(20, 20, 100)), DELTA);   // the same place
+			Assert.AreEqual(10.0, room.calculateHoseLength(new Point(10, 20, 100), new Point(20, 20, 100)), DELTA);  // one dimension diff
+			Assert.AreEqual(Math.Sqrt(200), room.calculateHoseLength(new Point(30, 30, 100), new Point(20, 20, 100)), DELTA);  // two dimension diff
 		}
 
 		[TestMethod()]
@@ -58,12 +61,13 @@ namespace Uloha_1___Instalateri.Tests
 		public void calculateHoseLengthTest_TeacherTests()
 		{
 			Room room = new Room(300);
-			Room smallerroom = new Room(184);
 
-			// Assert.AreEqual(310.483494, room.calculateHoseLength(new Point(100, 100, 0), new Point(20, 0, 200)));		// adjacent
-			// Assert.AreEqual(400.000000, room.calculateHoseLength(new Point(100, 100, 0), new Point(300, 100, 200)));        // adjacent
-			// Assert.AreEqual(524.690385, room.calculateHoseLength(new Point(130, 100, 0), new Point(200, 280, 300)));  // opposite 
-			// Assert.AreEqual(286.008741, smallerroom.calculateHoseLength(new Point(21, 37, 0), new Point(96, 55, 184)));  // opposite 
+			Assert.AreEqual(310.483494, room.calculateHoseLength(new Point(100, 100, 0), new Point(20, 0, 200)), DELTA);	// adjacent
+			Assert.AreEqual(400.000000, room.calculateHoseLength(new Point(100, 100, 0), new Point(300, 100, 200)), DELTA);  // adjacent
+			Assert.AreEqual(524.690385, room.calculateHoseLength(new Point(130, 100, 0), new Point(200, 280, 300)), DELTA);  // opposite 
+
+			Room smallerroom = new Room(184);
+			Assert.AreEqual(286.008741, smallerroom.calculateHoseLength(new Point(21, 37, 0), new Point(96, 55, 184)), DELTA);  // opposite 
 
 		}
 
