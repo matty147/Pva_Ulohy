@@ -302,7 +302,7 @@ namespace Uloha_1___Instalateri
 			Console.WriteLine($"PipeLength: {pipeLen}");
 			Console.WriteLine($"HoseLenght: {hoseLen}");
 
-			Console.ReadKey();
+		 
 		}
 	}
 }
