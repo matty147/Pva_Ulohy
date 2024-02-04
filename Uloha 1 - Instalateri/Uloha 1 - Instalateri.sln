@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32630.192
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uloha 1 - Instalateri", "Uloha 1 - Instalateri\Uloha 1 - Instalateri.csproj", "{C028930F-9B1B-462F-B53F-CBFC0DCA1224}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uloha1InstalateriTest", "Uloha1InstalateriTest\Uloha1InstalateriTest.csproj", "{799176BB-D879-4095-BF91-3841DABEA03A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C028930F-9B1B-462F-B53F-CBFC0DCA1224}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C028930F-9B1B-462F-B53F-CBFC0DCA1224}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C028930F-9B1B-462F-B53F-CBFC0DCA1224}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C028930F-9B1B-462F-B53F-CBFC0DCA1224}.Release|Any CPU.Build.0 = Release|Any CPU
+		{799176BB-D879-4095-BF91-3841DABEA03A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{799176BB-D879-4095-BF91-3841DABEA03A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{799176BB-D879-4095-BF91-3841DABEA03A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{799176BB-D879-4095-BF91-3841DABEA03A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2DB3CE99-C144-4E19-9EF0-3E997BEEB8F2}
+	EndGlobalSection
+EndGlobal
